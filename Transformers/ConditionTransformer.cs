@@ -1,4 +1,3 @@
-using System;
 using System.Linq.Expressions;
 
 namespace ExpressionBooster.Transformers
@@ -23,6 +22,7 @@ namespace ExpressionBooster.Transformers
             return expression;
         }
 
+        // TODO: normalization before pattern recognition
         private static Expression TransformEquivalentConditionArm(Expression expression, ExpressionSimplifier simplifier)
         {
             {
@@ -179,27 +179,27 @@ namespace ExpressionBooster.Transformers
                     {
                         Right: BinaryExpression
                         {
-                            Left: var leftLeft,
-                            Right: var leftRight
+                            Left: var rightLeft,
+                            Right: var rightRight
                         },
                         Left: BinaryExpression
                         {
-                            Left: var rightLeft,
-                            Right: var rightRight
+                            Left: var leftLeft,
+                            Right: var leftRight
                         },
                         NodeType: ExpressionType.AndAlso
                     })
                 {
                     {
                         // (!a || b) && (!a || !b)
-                        if (leftLeft is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
-                            && rightLeft is UnaryExpression
+                        if (rightLeft is UnaryExpression
                             { NodeType: ExpressionType.Not, Operand: var rRightLeft }
-                            && rightRight is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rRightRight }
-                            && simplifier.IsEquivalent(rLeftLeft, rRightLeft)
-                            && simplifier.IsEquivalent(leftRight, rRightRight))
+                            && leftLeft is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
+                            && leftRight is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
+                            && simplifier.IsEquivalent(rRightLeft, rLeftLeft)
+                            && simplifier.IsEquivalent(rightRight, rLeftRight))
                         {
                             return leftLeft;
                         }
@@ -207,14 +207,14 @@ namespace ExpressionBooster.Transformers
 
                     {
                         // (!a || b) && (!b || !a)
-                        if (leftLeft is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
-                            && rightLeft is UnaryExpression
+                        if (rightLeft is UnaryExpression
                             { NodeType: ExpressionType.Not, Operand: var rRightLeft }
-                            && rightRight is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rRightRight }
-                            && simplifier.IsEquivalent(rLeftLeft, rRightRight)
-                            && simplifier.IsEquivalent(leftRight, rRightLeft))
+                            && leftLeft is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
+                            && leftRight is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
+                            && simplifier.IsEquivalent(rRightLeft, rLeftRight)
+                            && simplifier.IsEquivalent(rightRight, rLeftLeft))
                         {
                             return leftLeft;
                         }
@@ -222,31 +222,31 @@ namespace ExpressionBooster.Transformers
 
                     {
                         // (b || !a) && (!a || !b)
-                        if (leftRight is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
-                            && rightLeft is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rRightLeft }
-                            && rightRight is UnaryExpression
+                        if (rightRight is UnaryExpression
                             { NodeType: ExpressionType.Not, Operand: var rRightRight }
-                            && simplifier.IsEquivalent(rLeftRight, rRightLeft)
-                            && simplifier.IsEquivalent(leftLeft, rRightRight))
+                            && leftLeft is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
+                            && leftRight is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
+                            && simplifier.IsEquivalent(rRightRight, rLeftLeft)
+                            && simplifier.IsEquivalent(rightLeft, rLeftRight))
                         {
-                            return leftLeft;
+                            return leftRight;
                         }
                     }
 
                     {
                         // (b || !a) && (!b || !a)
-                        if (leftRight is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
-                            && rightLeft is UnaryExpression
-                            { NodeType: ExpressionType.Not, Operand: var rRightLeft }
-                            && rightRight is UnaryExpression
+                        if (rightRight is UnaryExpression
                             { NodeType: ExpressionType.Not, Operand: var rRightRight }
-                            && simplifier.IsEquivalent(leftLeft, rRightLeft)
-                            && simplifier.IsEquivalent(rLeftRight, rRightRight))
+                            && leftLeft is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftLeft }
+                            && leftRight is UnaryExpression
+                            { NodeType: ExpressionType.Not, Operand: var rLeftRight }
+                            && simplifier.IsEquivalent(rightLeft, rLeftLeft)
+                            && simplifier.IsEquivalent(rRightRight, rLeftRight))
                         {
-                            return leftLeft;
+                            return leftRight;
                         }
                     }
                 }
@@ -294,7 +294,7 @@ namespace ExpressionBooster.Transformers
                             && simplifier.IsEquivalent(rLeftLeft, rRightRight)
                             && simplifier.IsEquivalent(leftRight, rRightLeft))
                         {
-                            return leftLeft;
+                            return leftRight;
                         }
                     }
 
@@ -324,7 +324,7 @@ namespace ExpressionBooster.Transformers
                             && simplifier.IsEquivalent(leftLeft, rRightLeft)
                             && simplifier.IsEquivalent(rLeftRight, rRightRight))
                         {
-                            return leftLeft;
+                            return leftRight;
                         }
                     }
                 }

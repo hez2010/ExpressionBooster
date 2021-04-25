@@ -99,6 +99,7 @@ namespace ExpressionBooster
             return (T)expr;
         }
 
+        // TODO: find a more efficient way to do this
         public bool IsEquivalent(Expression left, Expression right)
         {
             var simplifiedLeft = Simplify(left);
