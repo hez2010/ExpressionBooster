@@ -1,6 +1,8 @@
 # Expression Booster
 A simple expression simplifier using Math Rules.
 
+Note: behaviors of side effects may be changed after simplification, make sure you are using it against math calculation only.
+
 ## Current Supported Rules
 | Output | Intput |
 | - | - |
